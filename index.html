@@ -2,9 +2,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Regression</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        .title {
+            text-align: center;
+        }
+        .controls-dataset, .controls-models {
+            justify-content: center;
+            margin: auto;
+            width: 48%;
+        }
+        .controls-dataset-labels, .controls-models-labels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .controls-dataset-btns, .controls-models-btns {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-train {
+            grid-column: span 2;
+        }
+        label {
+            text-align: right;
+            margin-bottom: auto;
+            margin-top: auto;
+        }
+        input {
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid gray;
+        }
+        button {
+            color: white;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+        }
+        button:hover {
+            cursor: pointer;
+        }
+        .btn-train {
+            background-color: #030C5C;
+        }
+        .btn-train:hover {
+            background-color: #030F6E;
+        }
+        .btn-save {
+            background-color: #26A69A;
+        }
+        .btn-save:hover {
+            background-color: #29B5A8;
+        }
+        .btn-load {
+            background-color: #065F6E;
+        }
+        .btn-load:hover {
+            background-color: #066A7A;
+        }
+        .plots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .plot {
+            width: 100%;
+            height: 400px;
+        }
+        .loss {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        #discussion-documentation {
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+        #discussion-documentation h2 {
+            color: #26A69A;
+        }
+        .discussion-title {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+<div class="controls-dataset">
+    <h2 class="title">Datensatz-Parameter</h2>
+    <div class="controls-dataset-labels">
+        <label for="dataSize">Datensatzgröße (N):</label>
+        <input type="number" id="dataSize" value="100">
+        <label for="noiseVariance">Rauschvarianz (V):</label>
+        <input type="number" id="noiseVariance" value="0.05" step="0.01">
+    </div>
+    <div class="controls-dataset-btns">
+        <button onclick="generateAndSplitData()" class="btn-train">Datensatz erzeugen</button>
+        <button onclick="saveData()" class="btn-save">Datensatz speichern</button>
+        <button onclick="loadData()" class="btn-load">Datensatz laden</button>
+    </div>
+</div>
+<div class="plots">
+    <div id="plot-dataset" class="plot"></div>
+    <div id="plot-dataset-noisy" class="plot"></div>
+</div>
+<div class="controls-models">
+    <h2 class="title">Modell-Parameter</h2>
+    <div class="controls-models-labels">
+        <label for="epochs">Anzahl der Epochen:</label>
+        <input type="number" id="epochs" value="100">
+        <label for="learningRate">Lernrate:</label>
+        <input type="number" id="learningRate" value="0.01" step="0.001">
+    </div>
+    <div class="controls-models-btns">
+        <button onclick="trainModels()" class="btn-train">Modell trainieren</button>
+    </div>
+</div>
+<div class="plots">
+    <div id="plot-train" class="plot"></div>
+    <div id="plot-test" class="plot"></div>
+    <div id="loss-train" class="loss"></div>
+    <div id="loss-test" class="loss"></div>
+</div>
+<div class="controls-models">
+    <h2 class="title">Best-Fit</h2>
+    <div class="controls-models-btns">
+        <button onclick="trainModels()" class="btn-train">Modell trainieren</button>
+        <button onclick="saveModel('modelBestFit')" class="btn-save">Best-Fit Modell speichern</button>
+        <button onclick="loadModel('modelBestFit')" class="btn-load">Best-Fit Modell laden</button>
+    </div>
+</div>
+<div class="plots">
+    <div id="plot-train-best-fit" class="plot"></div>
+    <div id="plot-test-best-fit" class="plot"></div>
+    <div id="loss-train-best-fit" class="loss"></div>
+    <div id="loss-test-best-fit" class="loss"></div>
+</div>
+<div class="controls-models">
+    <h2 class="title">Over-Fit</h2>
+    <div class="controls-models-btns">
+        <button onclick="trainModels()" class="btn-train">Modell trainieren</button>
+        <button onclick="saveModel('modelOverFit')" class="btn-save">Over-Fit Modell speichern</button>
+        <button onclick="loadModel('modelOverFit')" class="btn-load">Over-Fit Modell laden</button>
+    </div>
+</div>
+<div class="plots">
+    <div id="plot-train-over-fit" class="plot"></div>
+    <div id="plot-test-over-fit" class="plot"></div>
+    <div id="loss-train-over-fit" class="loss"></div>
+    <div id="loss-test-over-fit" class="loss"></div>
+</div>
 
+<div id="discussion-documentation">
+    <!-- Experimente + Fragestellungen -->
+    <h2>Experimente und Fragestellung</h2>
+    <span class="discussion-title">Begründung der Parameter und Einstellungen</span><br>
+    ...<br><br>
+
+    <!-- Diskussion -->
+    <h2>Diskussion</h2>
+    <span class="discussion-title">Begründung der Parameter und Einstellungen</span><br>
+    ...<br><br>
+    <span class="discussion-title">Ergebnisse</span><br>
+    ...<br><br>
+    <span class="discussion-title">Gelernt</span><br>
+    Den Input-Datensatz sollte man mischen bevor man ihn an die Trainings-Algorithmen in TensorFlow übergibt. Man sollte
+    außerdem immer eine Normalisierung der Daten vor dem Training in Betracht ziehen. Einige Datensätze können ohne
+    Normalisierung gelernt werden, aber durch die Normalisierung der Daten werden oft eine ganze Reihe von Problemen
+    beseitigt, die ein effektives Lernen verhindern würden.<br><br>
+
+    <!-- Dokumentation -->
+    <h2>Dokumentation</h2>
+    <span class="discussion-title">Technisch</span><br>
+    ...<br><br>
+    <span class="discussion-title">Fachlich</span><br>
+    ...<br><br>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
