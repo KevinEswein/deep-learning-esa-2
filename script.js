@@ -141,7 +141,6 @@ async function trainModel(model, trainXs, trainYs, epochs ) {
     epochs: epochs,
     validationSplit: 0.2,
     batchSize: 32,
-    callbacks: tf.callbacks.earlyStopping({ monitor: 'val_loss', patience: 10 })
   });
 }
 
