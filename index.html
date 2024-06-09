@@ -87,7 +87,29 @@
             color: #26A69A;
         }
         .discussion-title {
+            color: #065F6E;
+            font-size: 20px;
             font-weight: bold;
+        }
+        .documentation-grid-3x4 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            width: 200px;
+        }
+        .documentation-grid-2x9 {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            width: 700px;
+        }
+        .documentation-grid {
+            display: grid;
+            gap: 10px;
+            margin: 10px;
+        }
+        .documentation-grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -159,28 +181,99 @@
 
 <div id="discussion-documentation">
     <!-- Experimente + Fragestellungen -->
-    <h2>Experimente und Fragestellung</h2>
-    <span class="discussion-title">Begründung der Parameter und Einstellungen</span><br>
-    ...<br><br>
+    <h2>1.) Experimente und Fragestellung</h2>
+    <b>Die besten Ergebnisse (Loss/MSE)</b>
+    <div class="documentation-grid documentation-grid-3x4">
+        <div class="documentation-grid-item"></div>
+        <div class="documentation-grid-item">Train</div>
+        <div class="documentation-grid-item">Test</div>
+        <div class="documentation-grid-item">Unverrauscht</div>
+        <div class="documentation-grid-item">0.1054</div>
+        <div class="documentation-grid-item">0.0361</div>
+        <div class="documentation-grid-item">Best Fit</div>
+        <div class="documentation-grid-item">0.2096</div>
+        <div class="documentation-grid-item">0.2841</div>
+        <div class="documentation-grid-item">Over Fit</div>
+        <div class="documentation-grid-item">0.0352</div>
+        <div class="documentation-grid-item">0.0983</div>
+    </div><br>
+    <b>Overfitting</b><br>
+    ...<br><br><br>
 
     <!-- Diskussion -->
-    <h2>Diskussion</h2>
-    <span class="discussion-title">Begründung der Parameter und Einstellungen</span><br>
-    ...<br><br>
-    <span class="discussion-title">Ergebnisse</span><br>
-    ...<br><br>
-    <span class="discussion-title">Gelernt</span><br>
+    <h2>2.) Diskussion</h2>
+    <span class="discussion-title">2.1) Begründung der Parameter und Einstellungen</span><br><br>
+    <b>Lernrate:</b> 0.01<br>
+    Eine moderate Lernrate stellt sicher, dass das Modell in einem angemessenen Tempo lernt, ohne große Sprünge zu
+    machen, die zu Instabilität führen könnten.<br><br>
+
+    <b>Epochen:</b> 100 für BestFit und 500 für OverFit<br>
+    100 Epochen reichen aus, um das Modell gut zu trainieren, ohne Overfitting zu verursachen.
+    Ich wählte 500 Epochen, um das Phänomen des Overfittings zu demonstrieren, wobei das Modell die Trainingsdaten
+    zu gut lernt und sich schlechter auf die Testdaten generalisiert.<br><br>
+
+    <b>Batchgröße:</b> 32<br>
+    Eine typische Wahl, die einen guten Kompromiss zwischen Speicheranforderungen und Trainingseffizienz bietet.<br><br>
+
+    <span class="discussion-title">2.2) Ergebnisse</span><br><br>
+    <b>Unverrauschte Daten</b>
+    Das Modell zeigt eine gute Leistung sowohl auf den Trainings- als auch auf den Testdaten, was auf eine gute
+    Generalisierung hinweist.<br><br>
+
+    <b>Verrauschte Daten</b>
+    Das BestFit-Modell zeigt eine moderate Leistung und generalisiert gut auf die Testdaten.
+    Das OverFit-Modell zeigt eine sehr gute Leistung auf den Trainingsdaten, aber eine deutlich schlechtere Leistung auf
+    den Testdaten, was auf Overfitting hinweist.<br><br>
+
+    <span class="discussion-title">2.3) Gelernt</span><br><br>
     Den Input-Datensatz sollte man mischen bevor man ihn an die Trainings-Algorithmen in TensorFlow übergibt. Man sollte
     außerdem immer eine Normalisierung der Daten vor dem Training in Betracht ziehen. Einige Datensätze können ohne
     Normalisierung gelernt werden, aber durch die Normalisierung der Daten werden oft eine ganze Reihe von Problemen
-    beseitigt, die ein effektives Lernen verhindern würden.<br><br>
+    beseitigt, die ein effektives Lernen verhindern würden.<br><br><br>
 
     <!-- Dokumentation -->
-    <h2>Dokumentation</h2>
-    <span class="discussion-title">Technisch</span><br>
-    ...<br><br>
-    <span class="discussion-title">Fachlich</span><br>
-    ...<br><br>
+    <h2>3.) Dokumentation</h2>
+    <span class="discussion-title">3.1) Technisch</span><br><br>
+    <b>Frameworks</b><br>
+    - TensorFlow.js: erstellt Neuronale Netze direkt im Browser, trainiert und evaluiert sie.<br>
+    - Plotly.js: erstellt interaktive Plots zur Visualisierung der Daten und Modellvorhersagen.<br><br>
+
+    <b>Technische Besonderheiten</b><br>
+    - Es wird der localStorage genutzt, um Daten und Modelle zu speichern und zu laden, was eine einfache Persistenz
+    der Daten und Modelle im Browser ermöglicht.<br>
+    - Die Modelle werden mit der Adam-Optimierungsmethode und dem Mean Squared Error (MSE) als Verlustfunktion
+    trainiert.<br><br>
+
+    <span class="discussion-title">3.2) Fachlich</span><br><br>
+    <b>Implementierung der Logik</b><br>
+    <div class="documentation-grid documentation-grid-2x9">
+        <div><b>Funktion</b></div>
+        <div><b>Erläuterung</b></div>
+        <div>functionY(x)</div>
+        <div>Definiert die Ground-Truth-Funktion.</div>
+        <div>generateData(N, noiseVar)</div>
+        <div>Erzeugt den Datensatz (mit und ohne Rauschen).</div>
+        <div>splitData(data, trainRatio)</div>
+        <div>Teilt die Daten in Trainings- und Testdatensätze auf.</div>
+        <div>createModel(learningRate)</div>
+        <div>Erstellt und kompiliert das neuronale Netzmodell.</div>
+        <div>trainModel(model, trainXs, trainYs, epochs)</div>
+        <div>Trainiert die Vorhersage-Modelle.</div>
+        <div>saveModel(modelName) + loadModel(modelName)</div>
+        <div>Speichert und lädt die Modelle im localStorage.</div>
+        <div>plotData(plotId, trainData, testData, colorTest, colorTrain, title)</div>
+        <div>Visualisiert die Daten.</div>
+        <div>plotPredictions(plotId, data, predictions, colorData, colorPred, title)</div>
+        <div>Visualisiert die Modellvorhersagen.</div>
+    </div><br><br>
+
+    <b>Wichtige Aspekte</b><br>
+    - Die Lösung demonstriert den Unterschied zwischen gutem BestFit und OverFit anhand von Trainings- und
+    Testdaten.<br>
+    - Die Implementierung zeigt, wie man TensorFlow.js und Plotly.js effektiv kombiniert, um neuronale Netze zu
+    trainieren und die Ergebnisse zu visualisieren.<br>
+    - Die Lösung betont die Wichtigkeit von Datenmischung und Normalisierung für ein effektives Training von neuronalen
+    Netzen.<br><br>
 </div>
 <script src="script.js"></script>
 </body>
