@@ -136,11 +136,11 @@ function initializeModels() {
 /**
  * ------ 4. Train models ------
  */
-async function trainModel(model, trainXs, trainYs, epochs = 100) {
+async function trainModel(model, trainXs, trainYs, epochs ) {
   await model.fit(trainXs, trainYs, {
     epochs: epochs,
     validationSplit: 0.2,
-    batchSize: 32, // Set batch size to 32
+    batchSize: 32,
     callbacks: tf.callbacks.earlyStopping({ monitor: 'val_loss', patience: 10 })
   });
 }
@@ -161,8 +161,8 @@ async function trainModels() {
     // 2) Evaluate model
     const lossTrain = model.evaluate(trainXsUnverrauscht, trainYsUnverrauscht);
     const lossTest = model.evaluate(testXsUnverrauscht, testYsUnverrauscht);
-    // console.log('Train Loss (Unverrauscht):', lossTrain.dataSync()[0]);
-    // console.log('Test Loss (Unverrauscht):', lossTest.dataSync()[0]);
+    console.log('Train Loss (Unverrauscht):', Number(lossTrain.dataSync()[0].toPrecision(4)));
+    console.log('Test Loss (Unverrauscht):', Number(lossTest.dataSync()[0].toPrecision(4)));
 
     // 3) Prognosis for visualization
     const predictionsTrain = model.predict(trainXsUnverrauscht).dataSync();
@@ -171,8 +171,8 @@ async function trainModels() {
     // 4) Visualization
     plotPredictions('plot-train', trainDataWithoutNoise, predictionsTrain, 'blue', 'orange', '2.1 Vorhersage auf Trainingsdaten (Unverrauscht)');
     plotPredictions('plot-test', testDataWithoutNoise, predictionsTest, 'red', 'orange', '2.2 Vorhersage auf Testdaten (Unverrauscht)');
-    document.getElementById('loss-train').innerText = `Train Loss: ${lossTrain.dataSync()}`;
-    document.getElementById('loss-test').innerText = `Test Loss: ${lossTest.dataSync()}`;
+    document.getElementById('loss-train').innerText = `Train Loss: ${Number(lossTrain.dataSync()[0].toPrecision(4))}`;
+    document.getElementById('loss-test').innerText = `Test Loss: ${Number(lossTest.dataSync()[0].toPrecision(4))}`;
   });
 
   const trainXsVerrauscht = tf.tensor2d(trainDataWithNoise.x, [trainDataWithNoise.x.length, 1]);
@@ -186,8 +186,8 @@ async function trainModels() {
     // 2) Evaluate model
     const lossTrain = modelBestFit.evaluate(trainXsVerrauscht, trainYsVerrauscht);
     const lossTest = modelBestFit.evaluate(testXsVerrauscht, testYsVerrauscht);
-    // console.log('Train Loss (BestFit):', lossTrain.dataSync()[0]);
-    // console.log('Test Loss (BestFit):', lossTest.dataSync()[0]);
+    console.log('Train Loss (BestFit):', Number(lossTrain.dataSync()[0].toPrecision(4)));
+    console.log('Test Loss (BestFit):', Number(lossTest.dataSync()[0].toPrecision(4)));
 
     // 3) Prognosis for visualization
     const predictionsTrain = modelBestFit.predict(trainXsVerrauscht).dataSync();
@@ -196,8 +196,8 @@ async function trainModels() {
     // 4) Visualization
     plotPredictions('plot-train-best-fit', trainDataWithNoise, predictionsTrain, 'blue', 'orange', '3.1 Vorhersage auf Trainingsdaten (BestFit)');
     plotPredictions('plot-test-best-fit', testDataWithNoise, predictionsTest, 'red', 'orange', '3.2 Vorhersage auf Testdaten (BestFit)');
-    document.getElementById('loss-train-best-fit').innerText = `Train Loss: ${lossTrain.dataSync()}`;
-    document.getElementById('loss-test-best-fit').innerText = `Test Loss: ${lossTest.dataSync()}`;
+    document.getElementById('loss-train-best-fit').innerText = `Train Loss: ${Number(lossTrain.dataSync()[0].toPrecision(4))}`;
+    document.getElementById('loss-test-best-fit').innerText = `Test Loss: ${Number(lossTest.dataSync()[0].toPrecision(4))}`;
   });
 
   await trainModel(modelOverFit, trainXsVerrauscht, trainYsVerrauscht, 500).then(() => {
@@ -206,10 +206,10 @@ async function trainModels() {
     const testYsVerrauscht = tf.tensor2d(testDataWithNoise.y, [testDataWithNoise.y.length, 1]);
 
     // 2) Evaluate model
-    const trainLoss = modelOverFit.evaluate(trainXsVerrauscht, trainYsVerrauscht);
-    const testLoss = modelOverFit.evaluate(testXsVerrauscht, testYsVerrauscht);
-    // console.log('Train Loss (OverFit):', trainLoss.dataSync()[0]);
-    // console.log('Test Loss (OverFit):', testLoss.dataSync()[0]);
+    const lossTrain = modelOverFit.evaluate(trainXsVerrauscht, trainYsVerrauscht);
+    const lossTest = modelOverFit.evaluate(testXsVerrauscht, testYsVerrauscht);
+    console.log('Train Loss (OverFit):', Number(lossTrain.dataSync()[0].toPrecision(4)));
+    console.log('Test Loss (OverFit):', Number(lossTest.dataSync()[0].toPrecision(4)));
 
     // 3) Prognosis for visualization
     const predictionsTrain = modelOverFit.predict(trainXsVerrauscht).dataSync();
@@ -218,8 +218,8 @@ async function trainModels() {
     // 4) Visualization
     plotPredictions('plot-train-over-fit', trainDataWithNoise, predictionsTrain, 'blue', 'orange', '4.1 Vorhersage auf Trainingsdaten (OverFit)');
     plotPredictions('plot-test-over-fit', testDataWithNoise, predictionsTest, 'red', 'orange', '4.2 Vorhersage auf Testdaten (OverFit)');
-    document.getElementById('loss-train-over-fit').innerText = `Train Loss: ${trainLoss.dataSync()}`;
-    document.getElementById('loss-test-over-fit').innerText = `Test Loss: ${testLoss.dataSync()}`;
+    document.getElementById('loss-train-over-fit').innerText = `Train Loss: ${Number(lossTrain.dataSync()[0].toPrecision(4))}`;
+    document.getElementById('loss-test-over-fit').innerText = `Test Loss: ${Number(lossTest.dataSync()[0].toPrecision(4))}`;
   });
 }
 
